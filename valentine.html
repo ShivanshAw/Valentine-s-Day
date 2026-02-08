@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Will You Be My Valentine?</title>
+
+<style>
+  body {
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: linear-gradient(135deg, #ffe6ec, #fff0f5);
+    overflow: hidden;
+  }
+
+  h1 {
+    margin-bottom: 20px;
+    font-weight: 600;
+    text-align: center;
+    padding: 0 10px;
+  }
+
+  .stage {
+    position: relative;
+    width: min(520px, 90vw);
+    height: 260px;
+  }
+
+  button {
+    padding: 14px 24px;
+    font-size: 18px;
+    border-radius: 14px;
+    border: none;
+    cursor: pointer;
+    position: absolute;
+    top: 120px;
+    transition:
+      left 0.4s ease,
+      top 0.4s ease,
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button:active {
+    transform: scale(0.96);
+  }
+
+  #yes {
+    left: 140px;
+    background: #ff4d6d;
+    color: white;
+  }
+
+  #no {
+    left: 280px;
+    background: #e0e0e0;
+  }
+
+  .msg {
+    margin-top: 18px;
+    font-size: 22px;
+    font-weight: 600;
+    text-align: center;
+    display: none;
+    animation: fadeIn 1.1s ease forwards;
+    padding: 0 10px;
+  }
+
+  .hug {
+    width: 220px;
+    margin: 12px auto 8px;
+    display: block;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.96); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  .heart {
+    position: fixed;
+    bottom: -20px;
+    font-size: 22px;
+    animation: floatUp 4s ease-in forwards;
+    pointer-events: none;
+  }
+
+  @keyframes floatUp {
+    from { transform: translateY(0) scale(1); opacity: 1; }
+    to   { transform: translateY(-110vh) scale(1.4); opacity: 0; }
+  }
+</style>
+</head>
+
+<body>
+
+<h1>Will you be my Valentine? ❤️</h1>
+
+<div class="stage" id="stage">
+  <button id="yes">Yes</button>
+  <button id="no">No</button>
+</div>
+
+<div class="msg" id="msg"></div>
+
+<script>
+  const stage = document.getElementById("stage");
+  const yesBtn = document.getElementById("yes");
+  const noBtn = document.getElementById("no");
+  const msg = document.getElementById("msg");
+  const question = document.querySelector("h1");
+
+  const lines = [
+    "Are you really sure? 🙂",
+    "Just asking… gently 💕",
+    "I promise no pressure 🌷",
+    "Still smiling over here 🥺",
+    "Okay but this feels nice 💖"
+  ];
+
+  let lineIndex = 0;
+  let lastX = 280;
+  let lastY = 120;
+
+  function nextLine() {
+    question.textContent = lines[lineIndex];
+    lineIndex = (lineIndex + 1) % lines.length;
+  }
+
+  function moveNoButton() {
+    const stageRect = stage.getBoundingClientRect();
+    const btnRect = noBtn.getBoundingClientRect();
+    const padding = 12;
+    const minDistance = 170;
+
+    let x, y, dist;
+    do {
+      x = Math.random() * (stageRect.width - btnRect.width - padding * 2) + padding;
+      y = Math.random() * (stageRect.height - btnRect.height - padding * 2) + padding;
+      dist = Math.hypot(x - lastX, y - lastY);
+    } while (dist < minDistance);
+
+    lastX = x;
+    lastY = y;
+
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
+
+    nextLine();
+  }
+
+  /* Desktop */
+  noBtn.addEventListener("mouseenter", moveNoButton);
+
+  /* Mobile */
+  noBtn.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    moveNoButton();
+  });
+
+  noBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    moveNoButton();
+  });
+
+  yesBtn.addEventListener("click", () => {
+    stage.style.display = "none";
+    question.textContent = "Yayyyyy!! 🥰";
+    msg.style.display = "block";
+    msg.innerHTML = `
+      <img src="./hug.gif" class="hug" alt="hug" />
+      <div>Thank you for making me smile 💕</div>
+    `;
+    startHearts();
+  });
+
+  function startHearts() {
+    const hearts = ["🤍", "💕", "💖"];
+    setInterval(() => {
+      const h = document.createElement("div");
+      h.className = "heart";
+      h.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+      h.style.left = Math.random() * 100 + "vw";
+      document.body.appendChild(h);
+      setTimeout(() => h.remove(), 4000);
+    }, 420);
+  }
+</script>
+
+</body>
+</html>
