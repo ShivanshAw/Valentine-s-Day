@@ -29,7 +29,9 @@
     position: relative;
     width: 100%;
     max-width: 420px;
-    height: 240px;
+    height: 260px;
+    display: flex;
+    justify-content: center;
   }
 
   button {
@@ -40,26 +42,31 @@
     cursor: pointer;
     position: absolute;
     top: 110px;
-    left: 50%;
-    transform: translate(-50%, 0);
     transition:
-      transform 0.35s ease,
+      left 0.35s ease,
+      top 0.35s ease,
+      transform 0.2s ease,
       box-shadow 0.2s ease;
     box-shadow: 0 8px 18px rgba(0,0,0,0.15);
     -webkit-tap-highlight-color: transparent;
   }
 
   button:active {
-    transform: translate(-50%, 0) scale(0.96);
+    transform: scale(0.96);
   }
 
+  /* YES — centered */
   #yes {
+    left: 50%;
+    transform: translateX(-50%);
     background: #ff4d6d;
     color: white;
     z-index: 2;
   }
 
+  /* NO — starts nearby, moves later */
   #no {
+    left: calc(50% + 120px);
     background: #e0e0e0;
     z-index: 1;
   }
@@ -127,8 +134,8 @@
   ];
 
   let lineIndex = 0;
-  let lastX = 0;
-  let lastY = 0;
+  let lastX = stage.offsetWidth / 2 + 120;
+  let lastY = 110;
 
   function nextLine() {
     question.textContent = lines[lineIndex];
@@ -136,21 +143,24 @@
   }
 
   function moveNoButton() {
-    const rect = stage.getBoundingClientRect();
-    const btn = noBtn.getBoundingClientRect();
-    const minDistance = 140;
+    const stageRect = stage.getBoundingClientRect();
+    const btnRect = noBtn.getBoundingClientRect();
+    const padding = 12;
+    const minDistance = 160;
 
     let x, y, dist;
     do {
-      x = Math.random() * (rect.width - btn.width) - (rect.width / 2 - btn.width / 2);
-      y = Math.random() * (rect.height - btn.height) - 40;
+      x = Math.random() * (stageRect.width - btnRect.width - padding * 2) + padding;
+      y = Math.random() * (stageRect.height - btnRect.height - padding * 2) + padding;
       dist = Math.hypot(x - lastX, y - lastY);
     } while (dist < minDistance);
 
     lastX = x;
     lastY = y;
 
-    noBtn.style.transform = `translate(${x}px, ${y}px)`;
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
+
     nextLine();
   }
 
